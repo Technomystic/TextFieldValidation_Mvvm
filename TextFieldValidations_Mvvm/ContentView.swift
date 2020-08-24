@@ -8,26 +8,26 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var username = ""
-    @State private var password = ""
-    @State private var confirmPass = ""
-    @State private var birthYear: Int = Calendar.current.dateComponents([.year], from: Date()).year!
+
+    @State private var signVM = SignupViewModel()
+
     @State private var showYearSelector: Bool = false
 
     var body: some View {
         ZStack {
             VStack {
                 VStack {
-                    EntryTextView(sfImageName: "envelope", isSecure: false, placeHolder: "Enter username", field: $username)
-                    EntryTextView(sfImageName: "lock", isSecure: false, placeHolder: "Enter password", field: $password)
-                    EntryTextView(sfImageName: "lock", isSecure: false, placeHolder: "Confirm password", field: $confirmPass)
+                    EntryTextView(sfImageName: "envelope", placeHolder: "Enter username", field: $signVM.username , isSecure: false, prompt: "")
+
+                    EntryTextView(sfImageName: "lock", placeHolder: "Enter password", field: $signVM.password, isSecure: true, prompt: "")
+                    EntryTextView(sfImageName: "lock", placeHolder: "Confirm password", field: $signVM.confirmPass, isSecure: true, prompt: "")
 
                     VStack(spacing: 5) {
                         Button(action: {
                             // Present Selection
                             self.showYearSelector.toggle()
                         }) {
-                            Text(String(self.birthYear))
+                            Text(String(signVM.birthYear))
                                 .padding(8)
                                 .foregroundColor(.primary)
                                 .background(Color(UIColor.secondarySystemBackground))
@@ -55,7 +55,7 @@ struct ContentView: View {
             }.disabled(showYearSelector)
             .padding()
 
-            YearPickerView(birthYear: $birthYear, showSelectorYear: $showYearSelector)
+            YearPickerView(birthYear: $signVM.birthYear, showSelectorYear: $showYearSelector)
                 .opacity(showYearSelector ? 1 : 0)
                 .animation(.easeIn)
         }
@@ -70,9 +70,10 @@ struct ContentView_Previews: PreviewProvider {
 
 struct EntryTextView: View {
     var sfImageName = ""
-    var isSecure: Bool = false
     var placeHolder: String = ""
     @Binding var field: String
+    var isSecure: Bool = false
+    var prompt: String = ""
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -87,6 +88,10 @@ struct EntryTextView: View {
             .padding(8)
             .background(Color(UIColor.secondarySystemBackground))
             .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray, lineWidth: 1))
+
+            Text(prompt)
+                .fixedSize(horizontal: false, vertical: /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+                .font(.caption)
         }
     }
 }
