@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
 
-    @State private var signVM = SignupViewModel()
+    @ObservedObject var signVM = SignupViewModel()
 
     @State private var showYearSelector: Bool = false
 
@@ -17,10 +17,10 @@ struct ContentView: View {
         ZStack {
             VStack {
                 VStack {
-                    EntryTextView(sfImageName: "envelope", placeHolder: "Enter username", field: $signVM.username , isSecure: false, prompt: "")
+                    EntryTextView(sfImageName: "envelope", placeHolder: "Enter username", field: $signVM.username , isSecure: false, prompt: signVM.validEmil)
 
-                    EntryTextView(sfImageName: "lock", placeHolder: "Enter password", field: $signVM.password, isSecure: true, prompt: "")
-                    EntryTextView(sfImageName: "lock", placeHolder: "Confirm password", field: $signVM.confirmPass, isSecure: true, prompt: "")
+                    EntryTextView(sfImageName: "lock", placeHolder: "Enter password", field: $signVM.password, isSecure: true, prompt: signVM.validPassword)
+                    EntryTextView(sfImageName: "lock", placeHolder: "Confirm password", field: $signVM.confirmPass, isSecure: true, prompt: signVM.confirmPwPrompt)
 
                     VStack(spacing: 5) {
                         Button(action: {
@@ -33,12 +33,13 @@ struct ContentView: View {
                                 .background(Color(UIColor.secondarySystemBackground))
                                 .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray, lineWidth: 1))
                         }
-                        Text("Year of birth").font(.caption)
+                        Text(signVM.validAge).font(.caption)
                     }
                     .padding(.vertical,8)
 
                     Button(action: {
                         // Create the user
+                        self.signVM.signUp()
                     }) {
                         Text("Sign Up")
                             .foregroundColor(.white)
@@ -46,6 +47,8 @@ struct ContentView: View {
                             .padding(.horizontal)
                             .background(Capsule().fill(Color.blue))
                     }
+                    .opacity(signVM.isSignUpCompleted ? 1 : 0.6)
+                    .disabled(!signVM.isSignUpCompleted)
                 }
                 .padding()
                 .background(Color(UIColor.systemBackground))
