@@ -81,7 +81,8 @@ struct EntryTextView: View {
         VStack(alignment: .leading) {
             HStack {
                 Image(systemName: sfImageName)
-                    .frame(width: 44, height: 44)
+                    .foregroundColor(.gray)
+                    .font(.headline)
                 if isSecure {
                     SecureField(placeHolder, text: $field).autocapitalization(.none)
                 } else {
